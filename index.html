@@ -1,0 +1,1690 @@
+<!doctype html>
+<html lang="nl">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bosz SMP Shop</title>
+  <style>
+    /* Checkout popup layout */
+    #checkoutModal .modal-body {
+      display: flex;
+      gap: 20px;
+    }
+
+    #checkoutModal .order-summary {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 15px;
+      border-radius: 10px;
+    }
+
+    #checkoutModal .checkout-form {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    #checkoutModal input {
+      padding: 8px;
+      border-radius: 6px;
+      border: none;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+
+    :root {
+      --accent: #6dd3ff;
+      --dark: #0f1724;
+      --muted: #94a3b8
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      margin: 0;
+      background: linear-gradient(180deg, #071024 0%, #071827 100%);
+      color: #e6eef6;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 28px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(4px)
+    }
+
+    .brand {
+      display: flex;
+      gap: 16px;
+      align-items: center
+    }
+
+.logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* zorgt dat niks buiten de box uitsteekt */
+  background: none; /* haalt de blauwe gradient weg */
+}
+
+.logo img {
+  width: 100%;        /* laat de afbeelding de box vullen */
+  height: 100%;
+  object-fit: contain; /* behoudt de verhoudingen */
+}
+
+
+    nav {
+      display: flex;
+      gap: 12px
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer
+    }
+
+    nav a:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.02)
+    }
+
+    .search {
+      min-width: 240px;
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .search input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 0;
+      background: rgba(255, 255, 255, 0.03);
+      color: inherit
+    }
+
+    .cart-link {
+      cursor: pointer;
+      color: var(--muted);
+      font-weight: 600
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 28px auto;
+      padding: 0 20px
+    }
+
+    .hero {
+      margin-bottom: 40px
+    }
+
+    .hero h1 {
+      font-size: 32px;
+      margin: 0 0 12px
+    }
+
+    .hero p {
+      margin: 0 0 16px;
+      color: var(--muted)
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 18px
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.12));
+      padding: 12px;
+      border-radius: 12px;
+      text-align: center
+    }
+
+    .card .thumb {
+      aspect-ratio: 1/1;
+      border-radius: 8px;
+      background: #061422;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden
+    }
+
+    .card .thumb img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 8px
+    }
+
+    .card h3 {
+      margin: 10px 0 6px;
+      font-size: 16px
+    }
+
+    .card .price {
+      font-weight: 700
+    }
+
+    .price-old {
+      text-decoration: line-through;
+      color: var(--muted);
+      margin-right: 6px
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      justify-content: center
+    }
+
+    button {
+      cursor: pointer;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 0;
+      background: var(--accent);
+      color: #042233;
+      font-weight: 600
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: var(--muted)
+    }
+
+    section {
+      margin-bottom: 60px
+    }
+
+    section h2 {
+      font-size: 24px;
+      margin: 0 0 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding-bottom: 6px
+    }
+
+    .cart {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      background: #072033;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      max-width: 320px;
+      display: none
+    }
+
+    .cart h4 {
+      margin: 0 0 8px;
+      font-size: 14px
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background: rgba(0, 0, 0, 0.6)
+    }
+
+    .modal-content {
+      background: #061422;
+      margin: 8% auto;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 640px;
+      position: relative;
+      color: #e6eef6
+    }
+
+    .modal-content h3 {
+      margin-top: 0
+    }
+
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      font-size: 22px;
+      cursor: pointer;
+      color: var(--muted)
+    }
+
+    footer {
+      background: #061422;
+      color: var(--muted);
+      padding: 28px;
+      margin-top: 40px;
+      text-align: center;
+      font-size: 14px
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none
+    }
+
+    /* Dropdown additions (enkel toegevoegd voor de Extra dropdown) */
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropbtn {
+      background: transparent;
+      border: 0;
+      color: var(--muted);
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .dropbtn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      background: linear-gradient(180deg, #061422, #041826);
+      min-width: 180px;
+      border-radius: 10px;
+      padding: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      box-shadow: 0 8px 24px rgba(2, 6, 23, 0.6);
+      z-index: 40;
+    }
+
+    .dropdown-content a {
+      display: block;
+      padding: 10px;
+      border-radius: 8px;
+      color: var(--muted);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .dropdown-content a:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .dropdown-content.show {
+      display: block;
+    }
+
+
+    @media(max-width:1000px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr)
+      }
+    }
+
+    @media(max-width:720px) {
+      nav {
+        flex-wrap: nowrap;
+        gap: 6px;
+        overflow-x: auto
+      }
+
+      nav::-webkit-scrollbar {
+        display: none
+      }
+
+      .search {
+        width: 100%;
+        margin-top: 10px
+      }
+
+      .grid {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr))
+      }
+
+      .cart {
+        right: 10px;
+        bottom: 10px;
+        max-width: 90%;
+        padding: 10px
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+<div class="brand">
+  <div class="logo">
+    <img src="images/logo.png" alt="Logo">
+  </div>
+  <div style="font-weight:700">Bosz SMP Shop</div>
+</div>
+
+
+    <nav>
+      <a onclick="scrollToSection('home')">Home</a>
+      <a onclick="scrollToSection('ranks')">Ranks</a>
+      <a onclick="scrollToSection('commands')">Commands</a>
+      <a onclick="scrollToSection('keys')">Keys</a>
+      <a onclick="scrollToSection('contact')">Contact</a>
+
+      <!-- Extra dropdown -->
+      <div class="dropdown">
+        <button class="dropbtn">Extra ▾</button>
+        <div class="dropdown-content">
+          <a onclick="filterCategory(7)">Booster</a>
+          <a onclick="filterCategory(6)">Extra</a>
+          <a onclick="filterCategory(3)">Player Vaults</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="search">
+      <input id="searchInput" placeholder="Zoek producten..." />
+      <div class="cart-link" onclick="toggleCart()">Winkelwagen</div>
+    </div>
+  </header>
+
+
+
+  <main>
+    <!-- HOME (alleen hier staat de lange tekst) -->
+    <section id="home" class="hero">
+      <h1>Welkom op Bosz SMP!</h1>
+      <p><b>Over ons:</b><br>
+        Wij van BOSZ bestaan al jaren. Wat begon als hobby is uitgegroeid tot een geweldig bestaan. We hebben duizenden
+        unieke spelers ontvangen en elke dag spelen er tientallen spelers op de server. Wij staan voor kwaliteit en
+        speelplezier!</p>
+
+      <p><b>Veiligheid:</b><br>
+        Bij ons staat veiligheid voorop. Alle gegevens van spelers zijn goed beveiligd en een team van vrijwilligers
+        helpt altijd. Je speelt in een veilige en gecontroleerde omgeving.</p>
+
+      <p><b>Voorwaarden:</b><br>
+        Onze algemene voorwaarden kun je volledig inzien voordat je tot betaling overgaat. Aankopen in onze winkel
+        vallen onder digitale inhoud en kunnen niet worden herroepen als ze binnen 14 dagen zijn geleverd. Let op: je
+        moet 18+ zijn of toestemming van een ouder hebben.</p>
+
+      <p><b>Disclaimer:</b><br>
+        BOSZ is niet verbonden met Mojang. Minecraft is © Mojang AB. Voor vragen neem contact op via Discord.</p>
+
+      <!-- ✅ Top Donator -->
+      <section id="topDonator">
+        <h2>Top Donator</h2>
+        <div class="grid">
+          <div class="card" id="topDonatorCard">
+            <p>Nog geen donaties goedgekeurd.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="recentOrders">
+        <h2>Recente Bestellingen</h2>
+        <div class="grid" id="recentOrdersList"></div>
+      </section>
+
+
+      <!-- RANKS -->
+      <section id="ranks">
+        <h2>Ranks</h2>
+        <div class="grid">
+          <!-- Ranks automatisch geladen via JS -->
+        </div>
+      </section>
+
+      <!-- COMMANDS -->
+      <section id="commands">
+        <h2>Commands</h2>
+        <div class="grid"></div>
+      </section>
+
+      <!-- KEYS -->
+      <section id="keys">
+        <h2>Keys</h2>
+        <div class="grid"></div>
+      </section>
+
+      <!-- BOOSTERS -->
+      <section id="boosters">
+        <h2>Boosters</h2>
+        <div class="grid">
+          <!-- Boosters automatisch geladen via JS -->
+        </div>
+      </section>
+
+      <!-- EXTRA -->
+      <section id="extra">
+        <h2>Extra</h2>
+        <div class="grid">
+          <!-- Extra automatisch geladen via JS -->
+        </div>
+      </section>
+
+
+      <!-- VAULTS -->
+      <section id="vaults">
+        <h2>Player Vaults</h2>
+        <div class="grid"></div>
+      </section>
+
+
+
+    </section>
+
+
+
+
+
+
+
+    <!-- SHOP (ranks/commands/keys/vaults/bundles share deze sectie) -->
+    <section id="shop" style="display:none">
+      <h2 id="sectionTitle"></h2>
+      <div class="grid" id="products"></div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" style="display:none">
+      <h2>Contact</h2>
+      <p>Heb je vragen of problemen? Neem contact op via Discord of e-mail:</p>
+      <p>Discord: <a href="#">discord.gg/bosz</a><br>Email: support@bosz.nl</p>
+    </section>
+  </main>
+
+  <!-- CART -->
+  <div class="cart" id="cartBox">
+    <h4>Winkelwagen</h4>
+    <div id="cartContents"></div>
+    <div style="margin-top:8px;text-align:right"><button onclick="openCheckout()">Afrekenen</button>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div id="infoModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h3 id="modalTitle"></h3>
+      <div id="modalBody"></div>
+      <div style="margin-top:16px;text-align:right">
+        <button onclick="closeModal()" style="margin-right:8px">Sluiten</button>
+        <button onclick="buyNow()">Nu kopen</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 BOSZ Shop. Gemaakt voor Bosz SMP. <a onclick="scrollToSection('home')">Terug naar boven</a></p>
+  </footer>
+
+  <script>
+    // Alle producten, netjes per categorie:
+    // category: 1 = Ranks, 2 = Keys, 3 = Vaults, 4 = Bundles, 5 = Commands
+    const DATA = {
+      products: [
+
+
+        //RANKS bosz smp
+        {
+  id: 130,
+  title: 'Donator',
+  category: 1,
+  price: 10.00,
+  img: 'images/donator.png',
+  info: `
+  <strong>Price:</strong> €10<br><br>
+  <ul>
+    <li>In-game & Discord rank</li>
+    <li>Create your own kit</li>
+    <li>Get your kit <strong>5 times</strong></li>
+    <li>More profit — <strong>1.5x money from any block you sell</strong></li>
+  </ul>`
+},
+{
+  id: 131,
+  title: 'VIP',
+  category: 1,
+  price: 7.00,
+  img: 'images/vip.png',
+  info: `
+  <strong>Price:</strong> €7<br><br>
+  <ul>
+    <li>In-game & Discord rank</li>
+    <li>Join the realm even when it's full</li>
+  </ul>`
+},
+{
+  id: 132,
+  title: 'VIP+',
+  category: 1,
+  price: 16.00,
+  img: 'images/vip+.png',
+  info: `
+  <strong>Price:</strong> €16<br><br>
+  <ul>
+    <li>All <strong>VIP</strong> perks</li>
+    <li>In-game & Discord rank</li>
+    <li>Create your own kit</li>
+    <li>Get your kit <strong>5 times</strong></li>
+  </ul>`
+},
+{
+  id: 133,
+  title: 'VIP++',
+  category: 1,
+  price: 22.00,
+  img: 'images/vip++.png',
+  info: `
+  <strong>Price:</strong> €22<br><br>
+  <ul>
+    <li>All <strong>VIP</strong> perks</li>
+    <li>In-game & Discord rank</li>
+    <li>Create your own kit</li>
+    <li>Get your kit <strong>12 times</strong></li>
+  </ul>`
+},
+{
+  id: 134,
+  title: 'Demon',
+  category: 1,
+  price: 40.00,
+  img: 'images/demon2.png',
+  info: `
+  <strong>Price:</strong> €40<br><br>
+  <ul>
+    <li>Join the realm when it’s full or kick someone for your friend (1 day cooldown)</li>
+    <li>In-game & Discord rank</li>
+    <li>Make your own kits <strong>2×</strong></li>
+    <li>Receive your own kit <strong>15 times</strong></li>
+    <li>Stash (worth €15)</li>
+    <li>2 Demon Keys</li>
+  </ul>`
+},
+{
+  id: 135,
+  title: 'Demon+',
+  category: 1,
+  price: 60.00,
+  img: 'images/demon2+.png',
+  info: `
+  <strong>Price:</strong> €60<br><br>
+  <ul>
+    <li>All <strong>Snow</strong> perks</li>
+    <li>Receive your own kit <strong>daily</strong> (claiming doesn’t stack)</li>
+    <li>Stash+ (worth €21)</li>
+    <li>5 Demon Keys</li>
+  </ul>`
+},
+
+
+        // RANKS Kingdom
+        {
+          id: 101,
+          title: 'Iron Rank',
+          category: 1,
+          price: 7.49,
+          img: 'images/iron.png',
+          info: `Onze goedkoopste rank is de Iron rank, desalniettemin is deze zeker de moeite waard! Bij het aanschaffen van de zilver rank ontvangt u veel leuke extra’s zoals crates, kits en andere leuke extra’s! Zie hieronder de lijst met alle perks en commands die onze zilver rank biedt.<br><br>
+          <strong>Perks</strong><ul><li>Zilver rank in de chat</li><li>De chatcolor wit</li><li>Om de 24 uur een "Iron crate" key (/claim)</li><li>Een water trail</li><li>De donator rank in onze Discord server</li></ul>
+          <strong>Iron kit (eens per 5 dagen):</strong><ul><li>Iron Helmet - Protection I</li><li>Iron Chestplate</li><li>Iron Leggings</li><li>Iron Boots - Protection I</li><li>Iron Sword - Sharpness I</li><li>1 Golden Apple</li><li>32 Cooked Porkchop</li></ul>`
+        },
+        {
+          id: 101.5,
+          title: 'Gold Rank',
+          category: 1,
+          price: 14.99,
+          img: 'images/gold.png',
+          info: `De Gold rank is de perfecte stap na Zilver. Met deze rank ontvang je extra commands, perks en betere kits! Zie hieronder de lijst met alle voordelen:<br><br>
+  <ul>
+    <li>Gold rank in de chat</li>
+    <li>Chatcolors: wit & goud</li>
+    <li>Om de 24 uur een "Gold crate" key (/claim)</li>
+    <li>Water & fire trail</li>
+    <li>1 private vault</li>
+    <li>Toegang tot het /craft commando</li>
+    <li>De donator rank in onze Discord server</li>
+  </ul>
+  <strong>Eens per 5 dagen de Gold kit:</strong>
+  <ul>
+    <li>Iron Helmet - Protection II</li>
+    <li>Iron Chestplate - Protection I</li>
+    <li>Iron Leggings - Protection I</li>
+    <li>Iron Boots - Protection II</li>
+    <li>Iron Sword - Sharpness II</li>
+    <li>3 Golden Apples</li>
+    <li>32 Cooked Porkchop</li>
+  </ul>`
+        },
+
+        {
+          id: 102,
+          title: 'Diamond Rank',
+          category: 1,
+          price: 24.99,
+          img: 'images/diamond.png',
+          info: `De beste middenmode is toch wel de Diamond rank! De Diamond rank is ideaal voor iedereen die echt veel extra commands en perks wil! De Diamond rank is net zoals alle andere ranks een exclusief extraatje voor op de BoszKD server! Zie hieronder de lijst met alle perks, commando’s en andere extra’s waar de Diamond rank over beschikt!<br><br>
+  <ul>
+    <li>Diamond rank in de chat!</li>
+    <li>De chatcolors wit, goud & diamond!</li>
+    <li>Om de 24 uur ''Diamond crate'' key (/Claim)</li>
+    <li>De water, fire en rainbow trail!</li>
+    <li>2 private vaults!</li>
+    <li>Toegang tot het /craft commando!</li>
+    <li>Toegang tot het /fly commando!</li>
+    <li>3 Homes!</li>
+    <li>Toegang tot het /enderchest commando!</li>
+    <li>De donator rank in onze Discord server!</li>
+  </ul>
+  <strong>Eens per 5 dagen de Diamond kit:</strong>
+  <ul>
+    <li>Diamond Helmet - Protection I</li>
+    <li>Diamond Chestplate</li>
+    <li>Diamond Leggings</li>
+    <li>Diamond Boots - Protection I</li>
+    <li>Diamond Sword - Sharpness I, Fire Aspect I</li>
+    <li>5 Golden appels</li>
+    <li>32 Cooked Porkchop</li>
+  </ul>`
+        },
+
+        {
+          id: 103,
+          title: 'Demon Rank',
+          category: 1,
+          price: 44.99,
+          img: 'images/demon.png',
+          info: `De beste standaard rank in onze server is de Demon rank! De Demon rank is de ultieme must-have voor alle spelers op Boszkd! De Snow rank beschikt over de meest handige commando’s en de gaafste extra’s. De Snow rank is ideaal als je jouw kingdom wilt laten groeien tot het grootste! Zo bevat het handige commando’s die helpen bij het bouwen en commando’s die je armor kunnen repairen. Zie hieronder de lijst met alle commando’s, perks en andere extra’s die de Snow rank biedt!<br><br>
+  <ul>
+    <li>De Demon rank in de chat!</li>
+    <li>De chatcolors wit, Rood, Zwart & paars!</li>
+    <li>Om de 24 uur een ''Demon crate'' key (/Claim)</li>
+    <li>De water, flame, rainbow en lava trail!</li>
+    <li>3 private vaults!</li>
+    <li>Toegang tot het /craft commando!</li>
+    <li>Toegang tot het /fly commando!</li>
+    <li>4 Homes!</li>
+    <li>Toegang tot het /enderchest commando!</li>
+    <li>Eens per 24 uur het /fix all commando kunnen gebruiken!</li>
+    <li>De donator rank in onze Discord server!</li>
+  </ul>
+  <strong>Eens per 5 dagen de Demon kit:</strong>
+  <ul>
+    <li>Diamond Helmet - Protection II</li>
+    <li>Diamond Chestplate - Protection I</li>
+    <li>Diamond Leggings - Protection I</li>
+    <li>Diamond Boots - Protection III</li>
+    <li>Diamond Sword - Sharpness II, Fire Aspect I</li>
+    <li>8 Golden appels</li>
+    <li>32 Cooked Porkchop</li>
+  </ul>`
+        },
+
+        {
+          id: 104,
+          title: 'End Rank',
+          category: 1,
+          price: 59.99,
+          img: 'images/end.png',
+          info: `De End rank is de must-have voor iedereen die niet binnen de lijntjes wil tekenen. Wat zo bijzonder is aan de End rank is dat je zelf je naam mag verzinnen, vandaar de naam Custom rank. Zo kun jij bijvoorbeeld een rank hebben die “Kikker” heet of misschien wel jouw zelfbedachte “Bureaustoel” rank. De Custom rank is de uitgebreidste rank die BoszKD biedt. Zo beschik je over de gaafste functies en kun je jouw kingdom versterken! Zie hieronder de lijst met alle perks, commando’s en de andere extra’s die de Custom rank biedt!<br><br>
+  <ul>
+    <li>Een End rank in de chat!</li>
+    <li>De chatcolor wit, goud, diamond, paars & roze!</li>
+    <li>Om de 24 uur een ''End crate'' key (/Claim)</li>
+    <li>De water, flame, rainbow, lava & snow trail!</li>
+    <li>5 private vaults!</li>
+    <li>Toegang tot het /craft commando!</li>
+    <li>Toegang tot het /fly commando!</li>
+    <li>5 homes!</li>
+    <li>Toegang tot het /enderchest commando!</li>
+    <li>Eens per 24 uur het /fix all commando kunnen gebruiken!</li>
+    <li>De donator rank in onze Discord server!</li>
+  </ul>
+  <strong>Eens per 5 dagen de End kit:</strong>
+  <ul>
+    <li>Diamond Helmet - Protection II</li>
+    <li>Diamond Chestplate - Protection I</li>
+    <li>Diamond Leggings - Protection I</li>
+    <li>Diamond Boots - Protection III</li>
+    <li>Diamond Sword - Sharpness IV, Fire Aspect I</li>
+    <li>8 Golden appels</li>
+    <li>32 Cooked Porkchop</li>
+  </ul>`
+        },
+
+        {
+          id: 105,
+          title: 'End+ Rank',
+          category: 1,
+          price: 74.99,
+          img: 'images/end+.png',
+          info: `De End+ rank is de must-have voor iedereen die niet binnen de lijntjes wil tekenen. Wat zo bijzonder is aan de End+ rank is dat je zelf je naam én kleur mag verzinnen, vandaar de naam Custom+ rank. Zo kun jij bijvoorbeeld een rank hebben die “Kikker” heet of misschien wel jouw zelfbedachte “Bureaustoel” rank. De Custom+ rank is de uitgebreidste rank die BoszKD biedt. Zo beschik je over de gaafste functies en kun je jouw kingdom versterken! Zie hieronder de lijst met alle perks, commando’s en de andere extra’s die de Custom+ rank biedt!<br><br>
+  <ul>
+    <li>Een End rank in de chat + een End kleur!</li>
+    <li>De chatcolor wit, goud, diamond, paars & roze.</li>
+    <li>Om de 24 uur een ''End+ crate'' key (/Claim)</li>
+    <li>De water, flame, rainbow, lava & snow trail!</li>
+    <li>6 private vaults!</li>
+    <li>Toegang tot het /craft commando!</li>
+    <li>Toegang tot het /fly commando!</li>
+    <li>Toegang tot het /rename commando!</li>
+    <li>Toegang tot het /compact commando!</li>
+    <li>6 homes!</li>
+    <li>Toegang tot het /enderchest commando!</li>
+    <li>Eens per 24 uur het /fix all commando kunnen gebruiken!</li>
+    <li>Eens per 5 minuten het /feed commando kunnen gebruiken!</li>
+    <li>Eens per 15 minuten toegang tot het /skull commando!</li>
+    <li>De donator rank in onze Discord server!</li>
+  </ul>
+  <strong>Eens per 5 dagen de End+ kit:</strong>
+  <ul>
+    <li>Diamond Helmet - Protection III</li>
+    <li>Diamond Chestplate - Protection II</li>
+    <li>Diamond Leggings - Protection II</li>
+    <li>Diamond Boots - Protection IV</li>
+    <li>Diamond Sword - Sharpness IV, Fire Aspect II</li>
+    <li>10 Golden appels</li>
+    <li>32 Cooked Porkchop</li>
+  </ul>`
+        },
+
+        {
+          id: 110,
+          title: 'Amethyst Rank [1 Maand]',
+          category: 1,
+          price: 9.99,
+          img: 'images/amethyst1m.png',
+          info: `De Aamethyst rank is exclusief verkrijgbaar voor spelers die al de End+ rank hebben. Dit is dus ook uitsluitend een rank voor de echte die hard sponsors! Met deze rank heb jij elke rank die er beschikbaar is op onze shop en je krijgt hier uiteraard een aantal leuke spullen bij.<br><br>
+  Deze rank is maandelijks. Na 1 maand zal de Amethyst rank verlopen en zal je rank terug worden gezet naar de Custom+ rank. Je zit dus niet vast aan een abonnement.<br>
+  <strong>LET OP:</strong> De maand loopt vanaf moment van betaling.<br><br>
+
+  <ul>
+    <li>Eenmalig 3 Amethyst keys</li>
+    <li>Een custom rank in de chat + een custom kleur!</li>
+    <li>De chatcolors wit, goud, diamond, paars & roze!</li>
+    <li>Om de 24 uur een ''Amethyst crate'' key (/Claim)</li>
+    <li>De water, flame, rainbow, lava, snow, pop, spark & spell trail!</li>
+    <li>7 private vaults!</li>
+    <li>Toegang tot het /craft commando!</li>
+    <li>Toegang tot het /fly commando!</li>
+    <li>Toegang tot het /rename commando!</li>
+    <li>7 homes!</li>
+    <li>Toegang tot het /enderchest commando!</li>
+    <li>Eens per 24 uur het /fix all commando kunnen gebruiken!</li>
+    <li>Eens per 5 minuten het /feed commando kunnen gebruiken!</li>
+    <li>Toegang tot het /compact commando!</li>
+    <li>Eens per 15 minuten toegang tot het /skull commando!</li>
+    <li>De donator rank in onze Discord server!</li>
+    <li>Je naam in de Hall of Fame voor de tijd dat jij de rank hebt!</li>
+  </ul>
+
+  <strong>Eens per 5 dagen de Amethyst kit:</strong>
+  <ul>
+    <li>Diamond Helmet - Protection IV</li>
+    <li>Diamond Chestplate - Protection III</li>
+    <li>Diamond Leggings - Protection III</li>
+    <li>Diamond Boots - Protection IV</li>
+    <li>Diamond Sword - Sharpness IV, Fire Aspect II</li>
+    <li>10 Golden appels</li>
+    <li>32 Cooked Porkchop</li>
+  </ul>`
+        },
+
+
+        {
+          id: 111,
+          title: 'Amethyst Rank [3 Maand]',
+          category: 1,
+          price: 29.99,
+          priceNew: 24.89,
+          img: 'images/amethyst3m.png',
+          info: `De Amethyst rank is exclusief verkrijgbaar voor spelers die al de Custom+ rank hebben. Dit is dus ook uitsluitend een rank voor de echte die hard sponsors! Met deze rank heb jij elke rank die er beschikbaar is op onze shop en je krijgt hier uiteraard een aantal leuke spullen bij.<br><br>
+  Deze rank is <strong>maandelijks</strong>. Na 3 maanden zal de Amethyst rank verlopen en zal je rank teruggezet worden naar de Custom+ rank. Je zit dus <u>niet</u> vast aan een abonnement.<br><br>
+
+  <ul>
+    <li><strong>Eenmalig:</strong> 9 Amethyst Keys</li>
+    <li><strong>Eenmalig:</strong> 100 Ducaten</li>
+    <li>Een custom rank in de chat + een custom kleur! *</li>
+    <li>De chatcolors wit, goud, diamond, paars & roze!</li>
+    <li>Om de 24 uur een ''Amethyst crate'' key (/Claim)</li>
+    <li>De water, flame, rainbow, lava, snow, pop, spark & spell trail!</li>
+    <li>7 private vaults!</li>
+    <li>Toegang tot het /craft commando!</li>
+    <li>Toegang tot het /fly commando!</li>
+    <li>Toegang tot het /rename commando!</li>
+    <li>Toegang tot het /compact commando!</li>
+    <li>7 homes!</li>
+    <li>Toegang tot het /enderchest commando!</li>
+    <li>Eens per 24 uur het /fix all commando gebruiken!</li>
+    <li>Eens per 5 minuten het /feed commando gebruiken!</li>
+    <li>Eens per 15 minuten toegang tot het /skull commando!</li>
+    <li>De donator rank in onze Discord server!</li>
+    <li>Je naam in de Hall of Fame voor de tijd dat je de rank hebt!</li>
+  </ul>
+
+  <strong>Eens per 5 dagen de Amethyst kit:</strong>
+  <ul>
+    <li>Diamond Helmet - Protection IV</li>
+    <li>Diamond Chestplate - Protection III</li>
+    <li>Diamond Leggings - Protection III</li>
+    <li>Diamond Boots - Protection IV</li>
+    <li>Diamond Sword - Sharpness IV, Fire Aspect II</li>
+    <li>10 Golden appels</li>
+    <li>32 Cooked Porkchop</li>
+  </ul>`
+        },
+
+
+        {
+          id: 112,
+          title: 'Amethyst Rank [Lifetime]',
+          category: 1,
+          price: 119.99,
+          priceNew: 99.59,
+          img: 'images/amethystlife.png',
+          info: `De Amethyst rank is exclusief verkrijgbaar voor spelers die al de Custom+ rank hebben. Dit is dus ook uitsluitend een rank voor de echte die hard sponsors! Met deze rank heb jij elke rank die er beschikbaar is op onze shop en je krijgt hier uiteraard een aantal leuke spullen bij.<br><br>
+  Deze rank is <strong>eeuwig</strong>. Het is dus een eenmalige betaling en verloopt niet!<br><br>
+
+  <ul>
+    <li><strong>Eenmalig:</strong> 15 Amethyst Keys, 1 Custom+ Keyall & 1 Custom Keyall</li>
+    <li>Een custom rank in de chat + een custom kleur! *</li>
+    <li>De chatcolors wit, goud, diamond, paars & roze!</li>
+    <li>Eens per 24 uur de Amethyst crate!</li>
+    <li>De water, flame, rainbow, lava, snow, pop, spark & spell trail!</li>
+    <li>7 private vaults!</li>
+    <li>Toegang tot het /craft commando!</li>
+    <li>Toegang tot het /fly commando!</li>
+    <li>Toegang tot het /rename commando!</li>
+    <li>7 homes!</li>
+    <li>Toegang tot het /enderchest commando!</li>
+    <li>Eens per 1 uur het /repair commando kunnen gebruiken!</li>
+    <li>Eens per 24 uur het /fix all commando kunnen gebruiken!</li>
+    <li>Eens per 5 minuten het /feed commando kunnen gebruiken!</li>
+    <li>Eens per 15 minuten toegang tot het /skull commando!</li>
+    <li>De donator rank in onze Discord server!</li>
+    <li>Je naam in de Hall of Fame!</li>
+  </ul>
+
+  <strong>Eens per 5 dagen de Amethyst kit:</strong>
+  <ul>
+    <li>Diamond Helmet - Protection IV</li>
+    <li>Diamond Chestplate - Protection III</li>
+    <li>Diamond Leggings - Protection III</li>
+    <li>Diamond Boots - Protection IV</li>
+    <li>Diamond Sword - Sharpness IV, Fire Aspect II</li>
+    <li>10 Golden appels</li>
+    <li>32 Cooked Porkchop</li>
+  </ul>`
+        },
+
+        // EXTRA
+        { id: 601, title: 'Spawner', category: 6, price: 9.99, img: 'images/spawner.png', info: `1x gold spawner (max 2 per kingdom)` },
+        { id: 602, title: '3 dubble kisten met bouwblokken', category: 6, price: 9.99, img: 'images/paper.png', info: `Ontvang 3x Dubbele kisten met bouwblokken naar keuze van (Je kunt dus bijvoorbeeld geen dubs aan gold / dia blokken claimen.)` },
+        { id: 603, title: '9 dubble kisten met bouwblokken', category: 6, price: 17.50, img: 'images/paper.png', info: `Ontvang 9x Dubbele kisten met bouwblokken naar keuze van (Je kunt dus bijvoorbeeld geen dubs aan gold / dia blokken claimen.)` },
+        { id: 604, title: 'Shulker Box', category: 6, price: 49.99, img: 'images/shulker.png', info: `Ontvang 1x Shulker Box (automatisch in loot)` },
+        { id: 605, title: 'Stash', category: 6, price: 15.00, img: 'images/stash.png', info: `Receive a stash without loot` },
+        { id: 606, title: 'Farm', category: 6, price: 8.00, img: 'images/farm.png', info: `Receive a farm with 1 module` },
+        { id: 607, title: 'Trading Hall', category: 6, price: 35.00, img: 'images/tradinghall.png', info: `Receive a fully build trading hall with villagers` },
+        { id: 608, title: 'Amethyst Pickaxe', category: 6, price: 5.00, img: 'images/amethystpickaxe.png', info: `Mine a 3x3 area, self destructs after 3 Days` },
+
+        // BOOSTERS
+        { id: 701, title: 'Haste', category: 7, price: 4.99, img: 'images/booster.png', info: `Haste voor 1H` },
+        { id: 702, title: 'Haste +', category: 7, price: 14.99, img: 'images/booster.png', info: `Haste 2 voor 2H` },
+
+        // COMMANDS (category 5)
+        { id: 201, title: 'Fly command [3 maand]', category: 5, price: 4.99, img: 'images/fly.png', info: `Fly voor 3 maanden. Gebruik: /fly` },
+        { id: 202, title: 'Fly command [Lifetime]', category: 5, price: 9.99, img: 'images/flycmdlife.png', info: `Fly voor lifetime. Gebruik: /fly` },
+        { id: 203, title: 'Fix all command', category: 5, price: 7.49, img: 'images/fixall.png', info: `Fix alle items in je inventaris: /fixall` },
+        { id: 204, title: 'Compact command', category: 5, price: 2.50, img: 'images/compact.png', info: `Compacteer je spullen automatisch: /compact` },
+        { id: 205, title: 'Rename command', category: 5, price: 0.99, img: 'images/rename.png', info: `Hernoem items: /rename <naam>` },
+        { id: 206, title: 'Feed command', category: 5, price: 1.50, img: 'images/feed.png', info: `Voed jezelf direct: /feed` },
+        { id: 207, title: 'Enderchest command', category: 5, price: 0.99, img: 'images/ec.png', info: `Open je enderchest: /enderchest` },
+        { id: 208, title: 'Head command', category: 5, price: 2.99, img: 'images/head.png', info: `Krijg spelershoofden: /head` },
+        { id: 209, title: 'Craft command', category: 5, price: 0.99, img: 'images/craft.png', info: `Open crafting interface: /craft` },
+        { id: 210, title: 'time command', category: 5, price: 2.99, img: 'images/time.png', info: `Stel persoonlijke tijd: /ptime` },
+        { id: 211, title: 'weather command', category: 5, price: 2.99, img: 'images/weather.png', info: `Stel persoonlijk weer: /pweather` },
+
+       // KEYS (category 2)
+
+  // Existing crate keys
+  { id: 401, title: '2x Desert Boss Crate Keys', category: 2, price: 3.00, img: 'images/desertcrate.png', info: '' },
+  { id: 402, title: '5x Desert Boss Crate Keys', category: 2, price: 8.00, img: 'images/desertcrate.png', info: '' },
+  { id: 403, title: '25x Desert Boss Crate Keys', category: 2, price: 30.00, img: 'images/desertcrate.png', info: '' },
+  { id: 404, title: '100x Desert Boss Crate Keys', category: 2, price: 110.00, img: 'images/desertcrate.png', info: '' },
+
+  { id: 405, title: '2x VIP Crate Keys', category: 2, price: 6.00, img: 'images/keyvip.png', info: '2x Key Vip' },
+  { id: 406, title: '5x VIP Crate Keys', category: 2, price: 15.00, img: 'images/keyvip.png', info: '5x Key Vip' },
+  { id: 407, title: '25x VIP Crate Keys', category: 2, price: 55.00, img: 'images/keyvip.png', info: '25x Key Vip' },
+  { id: 408, title: '100x VIP Crate Keys', category: 2, price: 200.00, img: 'images/keyvip.png', info: '100x Key Vip' },
+
+  { id: 409, title: '2x Demon Crate Keys', category: 2, price: 10.00, img: 'images/keydemon2.png', info: '2x Key Demon' },
+  { id: 410, title: '5x Demon Crate Keys', category: 2, price: 20.00, img: 'images/keydemon2.png', info: '5x Key Demon' },
+  { id: 411, title: '25x Demon Crate Keys', category: 2, price: 80.00, img: 'images/keydemon2.png', info: '25x Key Demon' },
+  { id: 412, title: '100x Demon Crate Keys', category: 2, price: 200.00, img: 'images/keydemon2.png', info: '100x Key Demon' },
+
+  // Your original "Key all" items
+  { id: 301, title: 'Key all Iron', category: 2, price: 2.99, img: 'images/keyzilver.png', info: '1x Key all Zilver' },
+  { id: 302, title: 'Key all Gold', category: 2, price: 4.99, img: 'images/keygold.png', info: '1x Key all Gold' },
+  { id: 303, title: 'Key all Diamond', category: 2, price: 5.99, img: 'images/keydiamond.png', info: '1x Key all Diamond' },
+  { id: 304, title: 'Key all Emerald', category: 2, price: 6.99, img: 'images/keyemerald.png', info: '1x Key all Emerald' },
+  { id: 305, title: 'Key all Redstone', category: 2, price: 14.99, img: 'images/keyredstone.png', info: '1x Key all Redstone' },
+  { id: 306, title: 'Key all End', category: 2, price: 9.99, img: 'images/keyend.png', info: '1x Key all End' },
+  { id: 307, title: '3x Key all Gold', category: 2, price: 13.99, img: 'images/keygold3x.png', info: '3x Key all Gold' },
+  { id: 308, title: '3x Key all Redstone', category: 2, price: 40.50, img: 'images/keyredstone3x.png', info: '3x Key all Redstone' },
+
+
+
+        
+        // VAULTS (category 3)
+        { id: 401, title: 'Player Vault 1', category: 3, price: 3.99, img: 'images/playervault.png', info: `Player Vault 1 - extra opslag` },
+        { id: 402, title: 'Player Vault 2', category: 3, price: 7.99, img: 'images/playervault.png', info: `Player Vault 2 - meer opslag` },
+        { id: 403, title: 'Player Vault 3', category: 3, price: 11.99, img: 'images/playervault.png', info: `Player Vault 3 - nog meer opslag` },
+
+        // BUNDLES (category 4)
+        { id: 501, title: 'Key Bundel #1', category: 4, price: 14.99, img: 'images/lsgtxvrdf2ihwndfcste.png', info: `Bundel met keys` },
+        { id: 502, title: 'Starter Bundle', category: 4, price: 24.99, img: 'images/starterbundle.png', info: `Starter bundle met rank + items` },
+        { id: 503, title: 'Ultimate Bundle', category: 4, price: 49.99, img: 'images/bundle.png', info: `Ultimate bundle: rank + commands + keys` }
+
+      ]
+    };
+      // ✅ Maak DATA beschikbaar voor andere pagina’s (zoals orders.html)
+  localStorage.setItem("DATA", JSON.stringify(DATA));
+
+
+    // DOM references
+    const productsEl = document.getElementById('products');
+    const sectionTitle = document.getElementById('sectionTitle');
+    const shopSection = document.getElementById('shop');
+    const modal = document.getElementById('infoModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalBody = document.getElementById('modalBody');
+    const cartBox = document.getElementById('cartBox');
+    const cartContents = document.getElementById('cartContents');
+
+    let CART = [];
+    let CURRENT = null;
+
+    // Render single card
+    function renderCard(p) {
+      const priceHTML = p.priceNew
+        ? `<span class="price-old">€${p.price.toFixed(2)}</span> <span class="price">€${p.priceNew.toFixed(2)}</span>`
+        : `<span class="price">€${p.price.toFixed(2)}</span>`;
+      return `<div class="card">
+    <div class="thumb"><img src="${p.img}" alt="${p.title}"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;width:100%">
+      <div style="display:flex;flex-direction:column;align-items:flex-start">
+        <h3 style="margin:0;font-size:16px">${p.title}</h3>
+        <div>${priceHTML}</div>
+      </div>
+      <div class="actions"><button onclick="showInfo(${p.id})">Meer informatie</button></div>
+    </div>
+  </div>`;
+    }
+
+
+    // Render list of products
+    function renderProductsList(list) {
+      productsEl.innerHTML = list.map(p => renderCard(p)).join('');
+    }
+
+    // Show products by category (1..5)
+    function filterCategory(catId) {
+      // hide home/contact when showing products
+      document.getElementById('home').style.display = 'none';
+      document.getElementById('contact').style.display = 'none';
+
+      const list = DATA.products.filter(p => p.category === catId);
+      const titles = {
+        1: 'Ranks',
+        2: 'Keys',
+        3: 'Player Vaults',
+        4: 'Bundles',
+        5: 'Commands',
+        6: 'Extra',
+        7: 'Boosters'
+      };
+
+      sectionTitle.textContent = titles[catId] || 'Producten';
+      renderProductsList(list);
+      shopSection.style.display = 'block';
+      shopSection.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Navigation handler
+    function scrollToSection(id) {
+      const home = document.getElementById('home');
+      const contact = document.getElementById('contact');
+      const cats = ['ranks', 'commands', 'keys', 'boosters', 'extra', 'vaults', 'bundles'];
+
+      // Zorg dat de shop (search/results) dicht is als we naar een interne sectie navigeren
+      if (typeof shopSection !== 'undefined') shopSection.style.display = 'none';
+
+      // HOME: toon alles zoals oorspronkelijk
+      if (id === 'home') {
+        // toon alle directe children van #home
+        Array.from(home.children).forEach(ch => ch.style.display = '');
+        home.style.display = 'block';
+        if (contact) contact.style.display = 'none';
+        home.scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+
+      // CONTACT: toon alleen contact
+      if (id === 'contact') {
+        // verberg alle home-children (houd #home zelf zichtbaar als container)
+        Array.from(home.children).forEach(ch => ch.style.display = 'none');
+        home.style.display = 'block';
+        contact.style.display = 'block';
+        contact.scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+
+      // CATEGORIEËN: toon only die ene sectie binnen #home
+      if (cats.includes(id)) {
+        // verberg alle directe children van #home, behalve de target
+        Array.from(home.children).forEach(ch => {
+          if (ch.id === id) ch.style.display = '';
+          else ch.style.display = 'none';
+        });
+        home.style.display = 'block';
+        if (contact) contact.style.display = 'none';
+
+        const target = document.getElementById(id);
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+
+      // fallback: probeer element te vinden en tonen
+      const el = document.getElementById(id);
+      if (el) {
+        Array.from(home.children).forEach(ch => ch.style.display = 'none');
+        home.style.display = 'block';
+        if (contact) contact.style.display = 'none';
+        el.style.display = '';
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+
+    // Show modal info
+    function showInfo(id) {
+      const p = DATA.products.find(x => x.id === id);
+      if (!p) return;
+      CURRENT = p;
+      modalTitle.textContent = p.title;
+      modalBody.innerHTML = `<p><strong>Prijs:</strong> €${(p.priceNew || p.price).toFixed(2)}</p>` + (p.info || 'Geen extra informatie beschikbaar.');
+      modal.style.display = 'block';
+    }
+
+    function closeModal() {
+      modal.style.display = 'none';
+      CURRENT = null;
+    }
+
+    // add to cart (increments qty if present)
+    function addToCart(product) {
+      const existing = CART.find(i => i.id === product.id);
+      if (existing) existing.qty += 1;
+      else CART.push({ id: product.id, title: product.title, price: (product.priceNew || product.price), qty: 1 });
+      updateCartUI();
+      cartBox.style.display = 'block';
+    }
+
+    // Called by "Nu kopen" in modal
+    function buyNow() {
+      if (!CURRENT) return;
+      addToCart(CURRENT);
+      closeModal();
+    }
+
+    function updateCartUI() {
+      if (CART.length === 0) {
+        cartContents.innerHTML = 'Je winkelwagen is leeg.';
+        cartBox.style.display = 'none';
+        return;
+      }
+      cartContents.innerHTML = CART.map(i =>
+        `<div style="display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.02)">
+          <div>${i.qty}× ${i.title}</div><div>€${(i.qty * i.price).toFixed(2)}</div>
+        </div>`
+      ).join('') + `<div style="text-align:right;margin-top:8px;font-weight:700">Totaal: €${CART.reduce((s, i) => s + i.qty * i.price, 0).toFixed(2)}</div>`;
+    }
+
+    function toggleCart() {
+      cartBox.style.display = (cartBox.style.display === 'none' || cartBox.style.display === '') ? 'block' : 'none';
+    }
+
+    function checkout(event) {
+      event.preventDefault(); // Zorg dat formulier niet de pagina herlaadt
+
+      const name = document.getElementById('customerName').value;
+      const address = document.getElementById('customerAddress').value;
+
+      if (cart.length === 0) {
+        alert('Je winkelwagen is leeg!');
+        return;
+      }
+
+      // Maak order object
+      const order = {
+        id: Date.now(),
+        name,
+        address,
+        items: [...cart],
+        total: cart.reduce((sum, item) => sum + item.price, 0)
+      };
+
+      // Voeg order toe aan Home-pagina
+      addOrderToHome(order);
+
+      // Opslaan in localStorage
+      let savedOrders = JSON.parse(localStorage.getItem('orders')) || [];
+      savedOrders.push(order);
+      localStorage.setItem('orders', JSON.stringify(savedOrders));
+
+      // Reset winkelwagen en sluit popup
+      cart = [];
+      updateCart();
+      closeCheckout();
+
+      alert('Bestelling geplaatst!');
+      sendDiscordDonation(order);
+
+    }
+
+    function addOrderToHome(order) {
+      const ordersList = document.getElementById('ordersList');
+
+      // Verwijder "geen bestellingen" tekst als er iets is
+      if (ordersList.querySelector('li.italic')) {
+        ordersList.innerHTML = '';
+      }
+
+      const li = document.createElement('li');
+      li.className = "border p-2 rounded bg-gray-50 shadow-sm";
+      li.innerHTML = `
+    <p><strong>${order.name}</strong> - €${order.total.toFixed(2)}</p>
+    <p class="text-sm text-gray-500">${order.items.length} product(en)</p>
+  `;
+      ordersList.appendChild(li);
+    }
+
+    // Zet bestellingen terug bij herladen
+    window.addEventListener('DOMContentLoaded', () => {
+      let savedOrders = JSON.parse(localStorage.getItem('orders')) || [];
+      savedOrders.forEach(order => addOrderToHome(order));
+    });
+
+
+    // Search
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      if (!q) {
+        productsEl.innerHTML = '';
+        shopSection.style.display = 'none';
+        return;
+      }
+      // hide home/contact when showing search results
+      document.getElementById('home').style.display = 'none';
+      document.getElementById('contact').style.display = 'none';
+
+      const results = DATA.products.filter(p => p.title.toLowerCase().includes(q));
+      sectionTitle.textContent = 'Zoekresultaten';
+      renderProductsList(results);
+      shopSection.style.display = 'block';
+    });
+
+    // Checkout button
+    document.getElementById('checkoutBtn').addEventListener('click', checkout);
+
+    // Close modal on outside click
+    window.onclick = function (e) {
+      if (e.target === modal) closeModal();
+    };
+
+    // Initialize: show home by default (already visible), but ensure shop/contact hidden
+    shopSection.style.display = 'none';
+    document.getElementById('contact').style.display = 'none';
+
+    // (Optional) expose some functions globally for inline onclicks
+    window.scrollToSection = scrollToSection;
+    window.showInfo = showInfo;
+    window.closeModal = closeModal;
+    window.buyNow = buyNow;
+    window.toggleCart = toggleCart;
+    window.checkout = checkout;
+    window.buyNow = buyNow;
+    window.addToCart = addToCart;
+  </script>
+
+  </main>
+
+  <script src="script.js"></script>
+
+  <script>
+    (function () {
+      const dropdown = document.querySelector('.dropdown');
+      const btn = dropdown.querySelector('.dropbtn');
+      const content = dropdown.querySelector('.dropdown-content');
+
+      // Klik op knop -> toggle open/dicht
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        content.classList.toggle('show');
+      });
+
+      // Klik buiten -> sluit
+      document.addEventListener('click', function (e) {
+        if (!dropdown.contains(e.target)) {
+          content.classList.remove('show');
+        }
+      });
+
+      // Escape -> sluit
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          content.classList.remove('show');
+        }
+      });
+    })();
+
+    function openCheckout() {
+      // Vul orderitems
+      const orderList = document.getElementById('orderItems');
+      orderList.innerHTML = '';
+      CART.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = `${item.qty}× ${item.title} - €${(item.qty * item.price).toFixed(2)}`;
+        orderList.appendChild(li);
+      });
+      document.getElementById('orderTotal').textContent =
+        '€' + CART.reduce((a, b) => a + (b.qty * b.price), 0).toFixed(2);
+
+      // Popup tonen
+      document.getElementById('checkoutModal').style.display = 'flex';
+    }
+
+    function closeCheckout() {
+      document.getElementById('checkoutModal').style.display = 'none';
+    }
+
+function submitOrder() {
+  let name = document.getElementById("name").value.trim();
+  let email = document.getElementById("email").value.trim();
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  if (!name || !email || cart.length === 0) {
+    alert("Vul je naam, e-mail en winkelwagen in.");
+    return;
+  }
+
+  let total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+  let order = {
+    name,
+    email,
+    cart,
+    total,
+    status: "In afwachting",
+    date: new Date().toISOString()
+  };
+
+  // Sla bestelling op in localStorage
+  let orders = JSON.parse(localStorage.getItem("orders")) || [];
+  orders.push(order);
+  localStorage.setItem("orders", JSON.stringify(orders));
+
+  // Verstuur melding naar Discord via PHP
+  sendDiscordDonation(order);
+
+  // Maak winkelwagen leeg
+  localStorage.removeItem("cart");
+
+  alert("✅ Bestelling succesvol geplaatst!");
+  window.location.href = "orders.html"; // naar je orders pagina
+}
+
+
+
+
+    // shift + x
+    document.addEventListener("keydown", function (e) {
+      // Shift + X opent orders.html
+      if (e.shiftKey && e.key === "X") {
+        window.location.href = "orders.html";
+      }
+    });
+
+
+  </script>
+
+  <!-- Checkout Popup -->
+  <div id="checkoutModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeCheckout()">&times;</span>
+      <div class="modal-body">
+        <!-- Linkerkant: bestelling -->
+        <div class="order-summary">
+          <h2>Jouw bestelling</h2>
+          <ul id="orderItems"></ul>
+          <p><strong>Totaal:</strong> <span id="orderTotal">€0.00</span></p>
+        </div>
+
+        <!-- Rechterkant: formulier -->
+        <div class="checkout-form">
+          <h2>Vul je gegevens in</h2>
+          <label for="mcname">Minecraft naam</label>
+          <input type="text" id="mcname" placeholder="Bijv. Steve123" required>
+
+          <label for="email">E-mail</label>
+          <input type="email" id="email" placeholder="jouw@email.com" required>
+
+          <button type="button" onclick="submitOrder()">Bestelling afronden</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showMessage(text, type = "success", duration = 3000) {
+      const msg = document.createElement("div");
+      msg.className = "toast " + type;
+      msg.innerText = text;
+      document.body.appendChild(msg);
+
+      msg.style.position = "fixed";
+      msg.style.bottom = "20px";
+      msg.style.right = "20px";
+      msg.style.background = (type === "error") ? "#dc2626" : "#065f46";
+      msg.style.color = "white";
+      msg.style.padding = "12px 16px";
+      msg.style.borderRadius = "8px";
+      msg.style.zIndex = "9999";
+      msg.style.opacity = "0";
+      msg.style.transition = "opacity 0.3s ease";
+
+      setTimeout(() => { msg.style.opacity = "1"; }, 10);
+      setTimeout(() => {
+        msg.style.opacity = "0";
+        setTimeout(() => msg.remove(), 300);
+      }, duration);
+    }
+
+    function submitOrder() {
+      let name = document.getElementById("mcname").value;
+      let email = document.getElementById("email").value;
+
+      if (!name || !email) {
+        showMessage("❌ Vul alstublieft naam en e-mailadres in.", "error", 4000);
+        return;
+      }
+
+      const order = {
+        name: name,
+        email: email,
+        cart: CART,
+        date: new Date().toLocaleString(),
+        status: "In afwachting"
+      };
+
+      let orders = JSON.parse(localStorage.getItem("orders")) || [];
+      orders.push(order);
+      localStorage.setItem("orders", JSON.stringify(orders));
+
+      localStorage.setItem("lastEmail", email);
+
+      showMessage("✅ Bedankt voor je bestelling! Hou je mail in de gaten.", "success", 4000);
+
+      let statusDiv = document.getElementById("orderStatus");
+      if (statusDiv) {
+        statusDiv.innerText = "Status van je laatste bestelling: " + order.status;
+      }
+
+      CART = [];
+      updateCartUI();
+      closeCheckout();
+    }
+
+
+
+    function register() {
+      let email = document.getElementById("regEmail").value;
+      let pass = document.getElementById("regPass").value;
+
+      if (!email || !pass) {
+        alert("Vul zowel e-mail als wachtwoord in.");
+        return;
+      }
+
+      let accounts = JSON.parse(localStorage.getItem("accounts")) || {};
+      if (accounts[email]) {
+        alert("Dit e-mailadres is al geregistreerd. Gebruik Login.");
+        return;
+      }
+
+      accounts[email] = { password: pass };
+      localStorage.setItem("accounts", JSON.stringify(accounts));
+      alert("Account aangemaakt! Je kunt nu inloggen.");
+    }
+
+    function login() {
+      let email = document.getElementById("regEmail").value;
+      let pass = document.getElementById("regPass").value;
+
+      let accounts = JSON.parse(localStorage.getItem("accounts")) || {};
+      if (accounts[email] && accounts[email].password === pass) {
+        localStorage.setItem("loggedInUser", email);
+        showAccountInfo(email);
+      } else {
+        alert("Onjuist e-mailadres of wachtwoord.");
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("loggedInUser");
+      document.getElementById("accountForm").style.display = "block";
+      document.getElementById("accountInfo").style.display = "none";
+    }
+
+    function showAccountInfo(email) {
+      document.getElementById("accountForm").style.display = "none";
+      document.getElementById("accountInfo").style.display = "block";
+      document.getElementById("accountEmail").innerText = email;
+    }
+
+    // bij laden van de pagina automatisch inloggen
+    window.onload = function () {
+      let user = localStorage.getItem("loggedInUser");
+      if (user) {
+        showAccountInfo(user);
+      }
+    };
+
+    function openAccountModal() {
+      document.getElementById("accountModal").style.display = "block";
+    }
+    function closeAccountModal() {
+      document.getElementById("accountModal").style.display = "none";
+    }
+
+    function registerAccount() {
+      let email = document.getElementById("accountEmail").value;
+      let pass = document.getElementById("accountPassword").value;
+      if (!email || !pass) {
+        alert("Vul zowel e-mail als wachtwoord in.");
+        return;
+      }
+      localStorage.setItem("userAccount", JSON.stringify({ email, pass }));
+      alert("Account aangemaakt!");
+      closeAccountModal();
+    }
+
+    function loginAccount() {
+      let email = document.getElementById("accountEmail").value;
+      let pass = document.getElementById("accountPassword").value;
+      let acc = JSON.parse(localStorage.getItem("userAccount"));
+      if (acc && acc.email === email && acc.pass === pass) {
+        alert("Succesvol ingelogd!");
+        closeAccountModal();
+      } else {
+        alert("Onjuist e-mail of wachtwoord.");
+      }
+    }
+
+    function loadRecentOrders() {
+      let orders = JSON.parse(localStorage.getItem("orders")) || [];
+      let list = document.getElementById("recentOrdersList");
+      if (!list) return;
+
+      if (orders.length === 0) {
+        list.innerHTML = "<p>Geen bestellingen geplaatst.</p>";
+        return;
+      }
+
+      // Laatste 6 bestellingen tonen
+      let recent = orders.slice(-6).reverse();
+
+      let html = "";
+      recent.forEach(order => {
+        html += `
+        <div class="card">
+          <h3>${order.name}</h3>
+          <p class="status" style="font-weight:bold;color:${order.status === "Goedgekeurd" ? "limegreen" :
+            order.status === "Geweigerd" ? "red" : "orange"
+          }">${order.status || "In afwachting"}</p>
+        </div>
+      `;
+      });
+
+      list.innerHTML = html;
+    }
+
+    // ✅ Nieuw: Top Donator
+    function updateTopDonator() {
+      let orders = JSON.parse(localStorage.getItem("orders")) || [];
+      let totals = {};
+
+      orders.forEach(order => {
+        if (order.status === "Goedgekeurd") {
+          let total = (order.cart || []).reduce((sum, item) => sum + (item.qty * item.price), 0);
+          if (order.name) {
+            totals[order.name] = (totals[order.name] || 0) + total;
+          }
+        }
+      });
+
+      let topName = null;
+      let topAmount = 0;
+      for (let name in totals) {
+        if (totals[name] > topAmount) {
+          topAmount = totals[name];
+          topName = name;
+        }
+      }
+
+      let card = document.getElementById("topDonatorCard");
+      if (!card) return;
+
+      if (topName) {
+        card.innerHTML = `
+        <h3>${topName}</h3>
+        <p><strong>Totaal gedoneerd:</strong> €${topAmount.toFixed(2)}</p>
+      `;
+      } else {
+        card.innerHTML = "<p>Nog geen donaties goedgekeurd.</p>";
+      }
+    }
+
+    // Laad recente bestellingen + top donator bij starten
+    document.addEventListener("DOMContentLoaded", () => {
+      loadRecentOrders();
+      updateTopDonator();
+    });
+
+    // Herlaad automatisch als localStorage verandert
+    window.addEventListener("storage", (event) => {
+      if (event.key === "orders") {
+        loadRecentOrders();
+        updateTopDonator();
+      }
+    });
+
+    // Laden zodra pagina klaar is
+    document.addEventListener("DOMContentLoaded", loadRecentOrders);
+
+    // Functie om een categorie in de juiste sectie te renderen
+    function renderCategory(catId, sectionId) {
+      const section = document.querySelector(`#${sectionId} .grid`);
+      if (!section) return;
+
+      // haal disabledProducts uit localStorage
+      const disabled = JSON.parse(localStorage.getItem("disabledProducts")) || [];
+
+      // filter: alleen producten in deze categorie die niet uitgezet zijn
+      const list = DATA.products.filter(
+        p => p.category === catId && !disabled.includes(p.id)
+      );
+
+      section.innerHTML = list.map(p => renderCard(p)).join('');
+    }
+
+
+    // Bij laden van de pagina: vul alle categorieën
+    function renderAllCategories() {
+      renderCategory(1, "ranks");    // Ranks
+      renderCategory(5, "commands"); // Commands
+      renderCategory(2, "keys");     // Keys
+      renderCategory(7, "boosters");  // Boosters
+      renderCategory(6, "extra");     // Extra
+      renderCategory(3, "vaults");   // Player Vaults
+    }
+
+    window.addEventListener("DOMContentLoaded", renderAllCategories);
+
+    // Herlaad producten zodra disabledProducts in localStorage verandert
+    window.addEventListener("storage", (event) => {
+      if (event.key === "disabledProducts") {
+        renderAllCategories();
+      }
+    });
+
+
+// Zet alle producten in localStorage zodat orders.html ze kan gebruiken
+localStorage.setItem("DATA", JSON.stringify(DATA));
+
+
+  </script>
+
+
+
+
+</body>
+
+</html>

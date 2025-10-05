@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Regels - Bosz SMP Shop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --accent: #00bcd4;
+      --bg-dark: #0d0d0d;
+      --sub-bg: #1a1a1a;
+      --text-light: #e0e0e0;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background-color: var(--sub-bg);
+      border-bottom: 2px solid var(--accent);
+    }
+
+    .brand {
+      font-weight: 600;
+      font-size: 20px;
+      color: var(--accent);
+    }
+
+    nav a {
+      color: var(--text-light);
+      text-decoration: none;
+      margin-left: 20px;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    nav a:hover,
+    nav a.active {
+      color: var(--accent);
+    }
+
+    .regels-container {
+      max-width: 900px;
+      margin: 50px auto;
+      padding: 0 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--accent);
+      margin-bottom: 30px;
+    }
+
+    .accordion,
+    .sub-accordion {
+      background-color: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      padding: 16px 20px;
+      width: 100%;
+      border: none;
+      text-align: left;
+      outline: none;
+      font-size: 16px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+
+    .accordion:hover,
+    .sub-accordion:hover {
+      box-shadow: 0 0 12px var(--accent);
+    }
+
+    .accordion:after,
+    .sub-accordion:after {
+      content: '\002B';
+      float: right;
+      font-weight: bold;
+    }
+
+    .accordion.active:after,
+    .sub-accordion.active:after {
+      content: "\2212";
+    }
+
+    .panel,
+    .sub-panel {
+      background-color: var(--sub-bg);
+      padding: 0 20px;
+      display: none;
+      overflow: hidden;
+      border-radius: 0 0 12px 12px;
+      margin-bottom: 12px;
+      transition: max-height 0.3s ease;
+    }
+
+    .panel p,
+    .sub-panel p,
+    .sub-panel ul {
+      padding: 12px 0;
+      margin: 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: linear-gradient(90deg, var(--accent), #0097a7);
+      color: #111;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="brand">Bosz SMP</div>
+    <nav>
+      <a href="index.html">Shop</a>
+      <a href="regels.html" class="active">Regels</a>
+    </nav>
+  </header>
+
+  <main class="regels-container">
+    <h1>📜 Regels</h1>
+
+    
+
+    <button class="accordion">General Rules</button>
+    <div class="panel">
+<button class="sub-accordion">Discord Rules</button>
+<div class="sub-panel">
+<ul>
+    <li>Always be respectful to all members.</li>
+    <li>No swearing, bullying, discrimination, racism, or sexism.</li>
+    <li>Keep the atmosphere friendly and fun.</li>
+    <li>Do not use offensive, insulting, or inappropriate language.</li>
+    <li>No spamming or excessive use of caps/emojis.</li>
+    <li>No advertising other servers or services without permission.</li>
+    <li>Keep messages relevant to each channel (e.g. #general, #games, #off-topic).</li>
+    <li>Avoid excessive use of @everyone or @here.</li>
+    <li>Private conversations belong in DMs, not in public channels.</li>
+    <li>No NSFW, violent, or illegal content.</li>
+    <li>Do not share personal information of yourself or others.</li>
+    <li>Use a microphone with decent quality, free from disruptive background noise.</li>
+    <li>No trolling, screaming, or inappropriate sound effects.</li>
+    <li>Listen to staff and follow their instructions.</li>
+    <li>Discussions about staff decisions should be handled in DMs or tickets, not in chat.</li>
+    <li>Insulting or sabotaging staff may result in a warning, mute, or ban.</li>
+    <li>Do not attempt to bypass the rules.</li>
+    <li>No external software like BetterDiscord.</li>
+  </ul>
+  <p><strong>Violations may result in a warning, mute, kick, or ban, depending on the severity.</strong></p>
+</div>
+
+
+      <button class="sub-accordion">Chat Rules</button>
+      <div class="sub-panel">
+<ul>
+  <li>Be respectful to all players.</li>
+  <li>No swearing, bullying, or insulting others.</li>
+  <li>Do not use inappropriate language or racist remarks.</li>
+  <li>No spamming, excessive use of caps, or repeated messages.</li>
+  <li>Keep the chat relevant to the channel or topic (e.g. general, trade, help).</li>
+  <li>No advertising other servers without staff permission.</li>
+  <li>Do not share personal information about yourself or others.</li>
+  <li>No links to harmful or dangerous websites.</li>
+  <li>Private conversations belong in direct messages (DMs), not in public chat.</li>
+  <li>Listen to moderators and staff, and follow their instructions.</li>
+  <li>Use common sense and ensure everyone has an enjoyable experience.</li>
+</ul>
+<p><strong>Violations may result in a warning, mute, kick, or ban, depending on the severity.</strong></p>
+
+</div>
+
+<button class="sub-accordion">In-Game Rules</button>
+<div class="sub-panel">
+<ul>
+  <li>No toxicity, bullying, racism, or harassment.</li>
+  <li>No Hacks or Cheats or third party clients.</li>
+  <li>No duping.</li>
+  <li>No Autoclickers.</li>
+  <li>Do not underkill.
+    <ul>
+      <li><strong>Do not kill or hit nakeds</strong> (players with no armor) or players wearing <strong>leather or chain armor</strong></li>
+      <li><strong>Underkilling with your fist is also not allowed.</strong></li>
+      <li>If a naked attacks you first, you’re allowed to fight back.</li>
+      <li>If a naked picks up loot from a fight, others are allowed to kill them.</li>
+      <li>It is allowed to kill a naked <strong>if they are using Diamond or Netherite tools</strong> (diamond pickaxe is allowed for nakeds).</li>
+      <li>Underkill is allowed <strong>during raids</strong>.</li>
+      <li>Killing players with chain armor while using iron or higher gear or tools counts as underkill (nakeds are allowed to use Diamond pickaxes).</li>
+      <li>Teammates may not assist in killing nakeds unless they are attacked first.</li>
+      <li>Do <strong>not body block</strong> nakeds or stand in their way to get hit (same way around).</li>
+    </ul>
+  </li>
+
+  <li>Do not 3v1.
+    <ul>
+      <li>3v1 is <strong>not allowed</strong>, unless it was a 3v2 and one teammate has already died.</li>
+      <li><strong>In raids or outside PvP mines</strong>, 3v1 is allowed.</li>
+      <li>Do not kill nakeds with Netherite tools unless the above exceptions apply.</li>
+    </ul>
+  </li>
+
+  <li>Do not bypass the rules.</li>
+  <li>Do not create lagg.</li>
+  <li>Do not spawn kill.</li>
+  <li>Do not kill farm.</li>
+  <li>DO not use small or invis skin.</li>
+  <li>Do not use a elytra in combat</li>
+  <li>Do not scam</li>
+  <li>Do not use the whisper strat</li>
+</ul>
+<p><strong>Violations may result in a warning, mute, kick, or ban, depending on the severity.</strong></p>
+
+      </div>
+    </div>
+
+
+
+    <button class="accordion">In-Game Tips</button>
+    <div class="panel">
+      <button class="sub-accordion">Banned Items</button>
+      <div class="sub-panel">
+ <ul>
+  <li>Elytra in combat</li>
+  <li>Trident in combat</li>
+  <li>Mace</li>
+
+ </ul>
+      </div>
+
+            <button class="sub-accordion">In-Game Commands</button>
+      <div class="sub-panel">
+ <ul>
+  <li>!aht</li>
+  <li>!money</li>
+  <li>!bal</li>
+  <li>!pay</li>
+  <li>!sell</li>
+  <li>!sellall</li>
+  <li>!shop</li>
+  <li>!topmoney</li>
+
+ </ul>
+    </div>
+
+    
+
+  </main>
+
+  <footer>
+    © 2025 Bosz SMP
+  </footer>
+
+  <script>
+    document.querySelectorAll(".accordion").forEach(acc => {
+      acc.addEventListener("click", function () {
+        this.classList.toggle("active");
+        const panel = this.nextElementSibling;
+        panel.style.display = panel.style.display === "block" ? "none" : "block";
+      });
+    });
+
+    document.querySelectorAll(".sub-accordion").forEach(sub => {
+      sub.addEventListener("click", function () {
+        this.classList.toggle("active");
+        const subPanel = this.nextElementSibling;
+        subPanel.style.display = subPanel.style.display === "block" ? "none" : "block";
+      });
+    });
+  </script>
+
+</body>
+
+</html>
