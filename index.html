@@ -403,7 +403,6 @@
         <div class="dropdown-content">
           <a onclick="filterCategory(7)">Booster</a>
           <a onclick="filterCategory(6)">Extra</a>
-          <a onclick="filterCategory(3)">Player Vaults</a>
         </div>
       </div>
     </nav>
@@ -489,12 +488,6 @@
         </div>
       </section>
 
-
-      <!-- VAULTS -->
-      <section id="vaults">
-        <h2>Player Vaults</h2>
-        <div class="grid"></div>
-      </section>
 
 
 
@@ -637,7 +630,7 @@
   info: `
   <strong>Price:</strong> €60<br><br>
   <ul>
-    <li>All <strong>Snow</strong> perks</li>
+    <li>All <strong>Demon</strong> perks</li>
     <li>Receive your own kit <strong>daily</strong> (claiming doesn’t stack)</li>
     <li>Stash+ (worth €21)</li>
     <li>5 Demon Keys</li>
@@ -683,10 +676,7 @@
 
 
         
-        // VAULTS (category 3)
-        { id: 401, title: 'Player Vault 1', category: 3, price: 3.99, img: 'images/playervault.png', info: `Player Vault 1 - extra opslag` },
-        { id: 402, title: 'Player Vault 2', category: 3, price: 7.99, img: 'images/playervault.png', info: `Player Vault 2 - meer opslag` },
-        { id: 403, title: 'Player Vault 3', category: 3, price: 11.99, img: 'images/playervault.png', info: `Player Vault 3 - nog meer opslag` },
+
 
         // BUNDLES (category 4)
         { id: 501, title: 'Key Bundel #1', category: 4, price: 14.99, img: 'images/lsgtxvrdf2ihwndfcste.png', info: `Bundel met keys` },
@@ -1370,5 +1360,6 @@ localStorage.setItem("DATA", JSON.stringify(DATA));
 
 
 </html>
+
 
 
